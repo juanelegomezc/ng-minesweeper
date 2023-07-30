@@ -1,0 +1,8 @@
+@import 'constants';
+
+#container {
+    display: flex;
+    justify-content: space-between;
+    background-color: $gray-background-color;
+    align-items: center;
+}

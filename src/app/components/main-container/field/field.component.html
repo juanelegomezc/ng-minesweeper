@@ -1,0 +1,9 @@
+<div [style.--columns]="columns" [style.--tileSize]="TILE_SIZE" id="field">
+    <app-tile 
+        *ngFor="let tile of minesweeperService.getTiles()" 
+        [tile]="tile" 
+        [ngClass]="{'button': !tile.isToggled}"
+        (click)="onClick(tile)"
+        (contextmenu)="onRightClick(tile)"
+    ></app-tile>
+</div>

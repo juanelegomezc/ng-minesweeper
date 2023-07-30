@@ -1,0 +1,18 @@
+#field {
+    width: calc(calc(var(--tileSize) + 1) * var(--columns) * 1px);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+
+    app-tile {
+        width: calc(var(--tileSize) * 1px);
+        height: calc(var(--tileSize) * 1px);
+        line-height: calc(var(--tileSize) * 1px);
+        text-align: center;
+        border: 1px solid #444;
+        margin-left: -1px;
+        margin-top: -1px;
+        cursor: default;
+    }
+}

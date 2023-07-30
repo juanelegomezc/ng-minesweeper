@@ -37,6 +37,12 @@
           }
         }
       }
+    },
+    {
+      "type": "shell",
+      "isBackground": true,
+      "label": "nvm",
+      "command": "nvm use v18.17.0"
     }
   ]
 }

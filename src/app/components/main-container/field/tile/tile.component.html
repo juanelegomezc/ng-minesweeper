@@ -1,0 +1,3 @@
+<div id="tile" [ngClass]="{'btn': !tile.isToggled(), 'explode': tile.isToggled() && tile.isMined()}">
+    <span [style]="{color: tile.color}">{{tile.value}}</span>
+</div>

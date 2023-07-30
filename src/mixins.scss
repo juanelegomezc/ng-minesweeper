@@ -1,0 +1,9 @@
+@import 'constants';
+
+@mixin button {
+    border-right: 4px inset #484848;
+    border-bottom: 4px inset #484848;
+    border-left: 4px outset #fff;
+    border-top: 4px outset #fff;
+    background-color: $gray-background-color;
+}
