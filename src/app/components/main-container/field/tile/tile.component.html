@@ -1,3 +1,4 @@
-<div id="tile" [ngClass]="{'btn': !tile.isToggled(), 'explode': tile.isToggled() && tile.isMined()}">
-    <span [style]="{color: tile.color}">{{tile.value}}</span>
+<div id="tile" [ngClass]="{'btn': isButton() , 'explode': tile.isToggled() && tile.isMined()}">
+    <div id="wrong" *ngIf="showWrongOverlay()">❌</div>
+    <span [style]="{color: tile.color}">{{getValue()}}</span>
 </div>
