@@ -1,5 +1,4 @@
 #field {
-    width: calc(calc(var(--tileSize) + 1) * var(--columns) * 1px);
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;

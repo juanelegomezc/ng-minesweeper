@@ -1,5 +1,12 @@
+import { MinesweeperLevels } from "./minesweeper-levels.enum";
 import { MinesweeperTileCoordinate } from "./minesweeper-tile-coordinate.model";
 import { MinesweeperTile } from "./minesweeper-tile.model";
+
+export class MinesweeperLevelProperty {
+    rows: number = -1;
+    columns: number = -1;
+    mines: number = -1;
+}
 
 export class MinesweeperField implements Iterable<MinesweeperTile>{
 
@@ -9,21 +16,44 @@ export class MinesweeperField implements Iterable<MinesweeperTile>{
     private _minedTiles: number[] = [];
     private _field: MinesweeperTile[][] = [];
 
+    static readonly LEVELS: Record<MinesweeperLevels, MinesweeperLevelProperty> = {
+        EASY: {
+            rows: 10,
+            columns: 10,
+            mines: 10
+        },
+        MEDIUM: {
+            rows: 20,
+            columns: 20,
+            mines: 20
+        },
+        HEARD: {
+            rows: 20,
+            columns: 20,
+            mines: 20
+        }
+    }
+
+    static readonly DEFAULT_LEVEL: MinesweeperLevels = MinesweeperLevels.EASY;
+
     constructor(rows: number = - 1, columns: number = -1, mines: number = -1) {
         this._rows = rows;
         this._columns = columns;
         this._mines = mines;
 
-        if (this._columns > 0 && this._rows > 0 && this._mines > 0) {
+        if (this.activeGame) {
             this._mineField();
             this._generateField();
             this._checkField();
         }
     }
 
+    public get activeGame(): boolean {
+        return this._columns > 0 && this._rows > 0 && this._mines > 0;
+    }
+
     public checkGame(): boolean {
         let notToggled = 0;
-
         for (let y = 0; y < this._rows; y++) {
             for (let x = 0; x < this._columns; x++) {
                 notToggled = !this.getTileAt(x, y).isToggled() ? notToggled + 1 : notToggled;

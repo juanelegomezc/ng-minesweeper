@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { MinesweeperField } from 'src/app/models/minesweeper-field.model';
+import { MinesweeperLevels } from 'src/app/models/minesweeper-levels.enum';
 import { MinesweeperService } from 'src/app/services/minesweeper.service';
 
 @Component({
@@ -15,6 +17,6 @@ export class FaceComponent {
     }
 
     onClick() {
-        this._minesweeperService.newGame(10, 10, 10);
+        this._minesweeperService.newGame(this._minesweeperService.currentLevel);
     }
 }

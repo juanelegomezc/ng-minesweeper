@@ -1,4 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { MinesweeperField, MinesweeperLevelProperty } from 'src/app/models/minesweeper-field.model';
+import { MinesweeperLevels } from 'src/app/models/minesweeper-levels.enum';
 import { MinesweeperTile } from 'src/app/models/minesweeper-tile.model';
 import { MinesweeperService } from 'src/app/services/minesweeper.service';
 
@@ -7,32 +10,28 @@ import { MinesweeperService } from 'src/app/services/minesweeper.service';
     templateUrl: './field.component.html',
     styleUrls: ['./field.component.scss']
 })
-export class FieldComponent implements OnInit {
-    @Input()
-    columns: number = -1;
-    @Input()
-    rows: number = -1;
-    @Input()
-    mines: number = -1;
+export class FieldComponent implements OnDestroy {
     width: string = "0";
     readonly TILE_SIZE: number = 30;
+    private _newGameObserver?: Subscription;
 
-    constructor(public minesweeperService: MinesweeperService) { }
-
-    ngOnInit(): void {
-        this.minesweeperService.newGame(this.rows, this.columns, this.mines)
+    constructor(public minesweeperService: MinesweeperService) {
+        this._newGameObserver = this.minesweeperService.newGame$.subscribe(level => {
+            this.width = `${(this.TILE_SIZE + 1) * level.columns}px`;
+        })
+        this.minesweeperService.newGame(this.minesweeperService.currentLevel);
     }
 
     onClick(tile: MinesweeperTile): void {
-        try {
-            this.minesweeperService.toggleTile(tile);
-        } catch(error) {
-            console.log("Error");
-        }
+        this.minesweeperService.toggleTile(tile);
     }
 
     onRightClick(tile: MinesweeperTile): boolean {
         this.minesweeperService.blockTile(tile);
         return false;
+    }
+
+    ngOnDestroy(): void {
+        this._newGameObserver?.unsubscribe();
     }
 }
