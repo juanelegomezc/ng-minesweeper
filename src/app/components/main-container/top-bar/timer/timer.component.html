@@ -1,6 +1,1 @@
-<div *ngIf="seconds$ | async as seconds else empty">
-    <app-lcd-display [length]="3" [value]="seconds"></app-lcd-display>
-</div>
-<ng-template #empty>
-    <app-lcd-display [length]="3" [value]="0"></app-lcd-display>
-</ng-template>
+<app-lcd-display [length]="3" [value]="minesweeperService.seconds"></app-lcd-display>

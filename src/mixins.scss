@@ -1,6 +1,7 @@
 @import 'constants';
 
 @mixin button {
+    cursor: pointer;
     border-right: 4px inset #484848;
     border-bottom: 4px inset #484848;
     border-left: 4px outset #fff;

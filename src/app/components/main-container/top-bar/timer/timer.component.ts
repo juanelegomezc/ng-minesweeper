@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, interval, map, pipe, timeInterval } from 'rxjs';
+import { MinesweeperService } from 'src/app/services/minesweeper.service';
 
 @Component({
   selector: 'app-timer',
@@ -7,9 +7,5 @@ import { Observable, interval, map, pipe, timeInterval } from 'rxjs';
   styleUrls: ['./timer.component.scss']
 })
 export class TimerComponent {
-
-  seconds$: Observable<number> = interval(1000).pipe(
-    timeInterval(),
-    map(interval => interval.value + 1)
-  )
+  constructor(public minesweeperService: MinesweeperService) { }
 }

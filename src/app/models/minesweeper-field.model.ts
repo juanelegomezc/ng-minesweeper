@@ -21,6 +21,17 @@ export class MinesweeperField implements Iterable<MinesweeperTile>{
         }
     }
 
+    public checkGame(): boolean {
+        let notToggled = 0;
+
+        for (let y = 0; y < this._rows; y++) {
+            for (let x = 0; x < this._columns; x++) {
+                notToggled = !this.getTileAt(x, y).isToggled() ? notToggled + 1 : notToggled;
+            }
+        }
+        return notToggled == this._mines;
+    }
+
     getTileAt(row: number, column: number): MinesweeperTile {
         return this._field[row][column];
     }

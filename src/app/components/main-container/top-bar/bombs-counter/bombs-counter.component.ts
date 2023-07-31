@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MinesweeperService } from 'src/app/services/minesweeper.service';
 
 @Component({
   selector: 'app-bombs-counter',
@@ -6,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./bombs-counter.component.scss']
 })
 export class BombsCounterComponent {
-
+  constructor(public minesweeperService: MinesweeperService) { }
 }
