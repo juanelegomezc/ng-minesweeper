@@ -1,4 +1,4 @@
 <div [style.--tileSize]="TILE_SIZE" [style]="{width: width}" id="field">
     <app-tile *ngFor="let tile of minesweeperService.getTiles()" [tile]="tile" [ngClass]="{'button': !tile.isToggled}"
-        (click)="onClick(tile)" (contextmenu)="onRightClick(tile)"></app-tile>
+        (click)="onClick(tile)" (contextmenu)="onRightClick(tile)" (longpress)="onLongPress(tile)"></app-tile>
 </div>

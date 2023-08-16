@@ -1,5 +1,5 @@
 import { MinesweeperLevels } from "./minesweeper-levels.enum";
-import { MinesweeperTileCoordinate } from "./minesweeper-tile-coordinate.model";
+import { MinesweeperPerimeter } from "./minesweeper-perimeter";
 import { MinesweeperTile } from "./minesweeper-tile.model";
 
 export class MinesweeperLevelProperty {
@@ -8,77 +8,72 @@ export class MinesweeperLevelProperty {
     mines: number = -1;
 }
 
-export class MinesweeperField implements Iterable<MinesweeperTile>{
+export class MinesweeperField implements Iterable<MinesweeperTile> {
 
     private _rows: number = -1;
     private _columns: number = -1;
     private _mines: number = -1;
-    private _minedTiles: number[] = [];
-    private _field: MinesweeperTile[][] = [];
+    private _field: MinesweeperTile[] = [];
 
     static readonly LEVELS: Record<MinesweeperLevels, MinesweeperLevelProperty> = {
-        EASY: {
-            rows: 10,
-            columns: 10,
+        BEGINNER: {
+            rows: 9,
+            columns: 9,
             mines: 10
         },
-        MEDIUM: {
-            rows: 20,
-            columns: 20,
-            mines: 20
+        INTERMEDIATE: {
+            rows: 16,
+            columns: 16,
+            mines: 40
         },
-        HEARD: {
-            rows: 20,
-            columns: 20,
-            mines: 20
+        EXPERT: {
+            rows: 16,
+            columns: 30,
+            mines: 99
         }
     }
 
-    static readonly DEFAULT_LEVEL: MinesweeperLevels = MinesweeperLevels.EASY;
+    static readonly DEFAULT_LEVEL: MinesweeperLevels = MinesweeperLevels.BEGINNER;
 
-    constructor(rows: number = - 1, columns: number = -1, mines: number = -1) {
-        this._rows = rows;
-        this._columns = columns;
-        this._mines = mines;
-
-        if (this.activeGame) {
-            this._mineField();
-            this._generateField();
-            this._checkField();
-        }
+    constructor(level: MinesweeperLevels = MinesweeperField.DEFAULT_LEVEL) {
+        let properties = MinesweeperField.LEVELS[level];
+        this._rows = properties.rows;
+        this._columns = properties.columns;
+        this._mines = properties.mines;
+        this._field = Array.from({ length: this._rows * this._columns }, (v: any, k: number) => new MinesweeperTile(k));
+        this._generateField();
     }
 
-    public get activeGame(): boolean {
+    public get columns(): number {
+        return this._columns;
+    }
+
+    public get rows(): number {
+        return this._rows;
+    }
+
+    public get isActive(): boolean {
         return this._columns > 0 && this._rows > 0 && this._mines > 0;
     }
 
     public checkGame(): boolean {
-        let notToggled = 0;
-        for (let y = 0; y < this._rows; y++) {
-            for (let x = 0; x < this._columns; x++) {
-                notToggled = !this.getTileAt(x, y).isToggled() ? notToggled + 1 : notToggled;
-            }
-        }
-        return notToggled == this._mines;
+        let notToggled = this._field.filter(tile => !tile.isToggled())
+        return notToggled.length == this._mines;
     }
 
-    getTileAt(row: number, column: number): MinesweeperTile {
-        return this._field[row][column];
+    public getTile(pos: number): MinesweeperTile | undefined {
+        return pos >= 0 && pos < this._field.length ? this._field[pos] : undefined;
     }
 
     [Symbol.iterator](): Iterator<MinesweeperTile> {
         let pos = 0;
         let field = this._field;
-        let columns = this._columns;
-        let rows = this._rows;
-        let getCoordinates = this._getCoordinates.bind(this);
         return {
             next(): IteratorResult<MinesweeperTile> {
-                if (pos < rows * columns) {
-                    let coordinates = getCoordinates(pos++);
+                if (pos < field.length) {
                     return {
                         done: false,
-                        value: field[coordinates.y][coordinates.x]
+                        value: field[pos++]
                     }
                 } else {
                     return {
@@ -92,63 +87,21 @@ export class MinesweeperField implements Iterable<MinesweeperTile>{
 
     private _mineField(): void {
         let max = this._rows * this._columns - 1;
-        this._minedTiles = [];
         let i = 0;
         do {
             let pos = Math.floor(Math.random() * (max + 1))
-            if (!this._minedTiles.find(value => value == pos)) {
-                this._minedTiles.push(pos);
+            if (!this._field[pos].isMined()) {
+                this._field[pos].mined = true;
+                i++;
             }
-        } while (this._minedTiles.length < this._mines)
+        } while (i < this._mines)
     }
 
     private _generateField(): void {
-        let pos = 0;
-        for (let row = 0; row < this._rows; row++) {
-            this._field[row] = [];
-            for (let column = 0; column < this._columns; column++) {
-                let isMined = this._minedTiles.find(value => value == pos) != undefined;
-                let coordinates = this._getCoordinates(pos);
-                let tile = new MinesweeperTile(isMined, pos, coordinates);
-                this._field[row][column] = tile;
-                pos++;
-            }
-        }
-    }
-
-    private _checkField(): void {
-        for (let y = 0; y < this._rows; y++) {
-            for (let x = 0; x < this._columns; x++) {
-                let tile = this.getTileAt(y, x);
-                this._checkBorders(tile, y, x);
-            }
-        }
-    }
-
-    private _checkBorders(tile: MinesweeperTile, row: number, column: number): void {
-        let count = 0;
-        let borders: MinesweeperTile[] = [];
-        for (let y = (row - 1) < 0 ? 0 : row - 1; y <= row + 1 && y < this._rows; y++) {
-            for (let x = (column - 1) < 0 ? 0 : column - 1; x <= column + 1 && x < this._columns; x++) {
-                if (x == column && y == row) {
-                    continue;
-                }
-                borders.push(this.getTileAt(y, x));
-                let pos = this._getPos(y, x);
-                count = this._minedTiles.find(value => value == pos) != undefined ? count + 1 : count;
-            }
-        }
-        tile.borders = borders;
-        tile.value = count;
-    }
-
-    private _getPos(row: number, column: number): number {
-        return row * this._columns + column;
-    }
-
-    private _getCoordinates(pos: number): MinesweeperTileCoordinate {
-        let x = pos % this._columns;
-        let y = Math.floor(pos / this._columns);
-        return { x, y };
+        this._mineField();
+        this._field.forEach((tile) => {
+            tile.perimeter = new MinesweeperPerimeter(tile.pos, this);
+            tile.value = tile.perimeter.sum
+        })
     }
 }

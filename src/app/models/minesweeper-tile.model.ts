@@ -1,13 +1,12 @@
-import { MinesweeperTileCoordinate } from "./minesweeper-tile-coordinate.model";
+import { MinesweeperPerimeter } from "./minesweeper-perimeter";
 
 export class MinesweeperTile {
     private _isMined: boolean = false;
-    private _pos: number;
-    private _coordinates: MinesweeperTileCoordinate;
+    private _pos: number = -1;
     private _value: number = -1;
     private _isToggled: boolean = false;
-    private _borders: MinesweeperTile[] = [];
-    private _isBlocked: boolean = false;
+    private _perimeter?: MinesweeperPerimeter;
+    private _isLocked: boolean = false;
     private _colors: string[] = [
         "blue",
         "green",
@@ -19,18 +18,20 @@ export class MinesweeperTile {
         "grey"
     ]
 
-    constructor(isMined: boolean = false, pos: number = -1, coordinates: MinesweeperTileCoordinate = { x: -1, y: -1 }) {
-        this._isMined = isMined;
+    constructor(pos: number) {
         this._pos = pos;
-        this._coordinates = coordinates;
     }
 
     public set value(value: number) {
         this._value = value;
     }
 
+    public get pos(): number {
+        return this._pos;
+    }
+
     public get value(): string {
-        if(this._isBlocked) {
+        if (this._isLocked) {
             return "🚩";
         } else if (!this._isToggled) {
             return "";
@@ -42,23 +43,27 @@ export class MinesweeperTile {
         return '';
     }
 
-    public set block(block: boolean) {
-        this._isBlocked = block;
+    public set lock(lock: boolean) {
+        this._isLocked = lock;
     }
 
-    public set borders(borders: MinesweeperTile[]) {
-        this._borders = borders;
+    public set perimeter(perimeter: MinesweeperPerimeter) {
+        this._perimeter = perimeter;
     }
 
-    public get borders(): MinesweeperTile[] {
-        return this._borders;
+    public get perimeter(): MinesweeperPerimeter | undefined {
+        return this._perimeter;
     }
 
     public get color(): string {
-        if(!this.isToggled()) {
+        if (!this.isToggled()) {
             return "";
         }
         return this._value > 0 ? this._colors[this._value - 1] : "";
+    }
+
+    public set mined(isMined: boolean) {
+        this._isMined = isMined;
     }
 
     isEmpty(): boolean {
@@ -77,7 +82,7 @@ export class MinesweeperTile {
         return this._isMined;
     }
 
-    isBlocked(): boolean {
-        return this._isBlocked;
+    isLocked(): boolean {
+        return this._isLocked;
     }
 }

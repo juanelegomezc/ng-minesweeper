@@ -1,8 +1,16 @@
 @import 'constants';
 
-#container {
+#top {
     display: flex;
     justify-content: space-between;
+    background-color: $gray-background-color;
+    align-items: center;
+    padding: 10px 0;
+}
+
+#bottom {
+    display: flex;
+    justify-content: flex-end;
     background-color: $gray-background-color;
     align-items: center;
     padding: 10px 0;

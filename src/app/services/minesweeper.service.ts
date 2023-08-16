@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { MinesweeperField, MinesweeperLevelProperty } from '../models/minesweeper-field.model';
+import { MinesweeperField } from '../models/minesweeper-field.model';
 import { MinesweeperTile } from '../models/minesweeper-tile.model';
-import { Observable, Subject, Subscriber, Subscription, interval, map, of, timeInterval } from 'rxjs';
+import { Subject, Subscription, interval, map, timeInterval } from 'rxjs';
 import { MinesweeperLevels } from '../models/minesweeper-levels.enum';
 
 @Injectable({
@@ -15,10 +15,8 @@ export class MinesweeperService {
     private _timerSubscription: Subscription = new Subscription();
     private _seconds: number = 0;
     private _won: boolean = false;
-    private _newGameObservable: Subject<MinesweeperLevelProperty> = new Subject();
-    private _currentLevel?: MinesweeperLevelProperty;
-
-    constructor() { }
+    private _newGameObservable: Subject<MinesweeperLevels> = new Subject();
+    private _currentLevel?: MinesweeperLevels;
 
     public get mines(): number {
         return this._leftMines;
@@ -28,12 +26,12 @@ export class MinesweeperService {
         return this._seconds;
     }
 
-    public get newGame$(): Subject<MinesweeperLevelProperty> {
+    public get newGame$(): Subject<MinesweeperLevels> {
         return this._newGameObservable;
     }
 
-    public get currentLevel(): MinesweeperLevelProperty {
-        return this._currentLevel ?? MinesweeperField.LEVELS[MinesweeperField.DEFAULT_LEVEL];
+    public get currentLevel(): MinesweeperLevels {
+        return this._currentLevel ?? MinesweeperField.DEFAULT_LEVEL;
     }
 
     public isGameOver(): boolean {
@@ -44,11 +42,15 @@ export class MinesweeperService {
         return this._won;
     }
 
-    newGame(level: MinesweeperLevelProperty): void {
+    newGame(level?: MinesweeperLevels): void {
+        if (!level && !this._currentLevel) {
+            this._currentLevel = MinesweeperField.DEFAULT_LEVEL
+        } else if (level) {
+            this._currentLevel = level;
+        }
         this._isGameOver = false;
-        this._leftMines = level.mines;
+        this._leftMines = MinesweeperField.LEVELS[this.currentLevel].mines;
         this._seconds = 0;
-        this._currentLevel = level;
         this._timerSubscription.unsubscribe();
         this._timerSubscription = interval(1000).pipe(
             timeInterval(),
@@ -57,8 +59,8 @@ export class MinesweeperService {
             this._seconds = seconds;
         });
         this._won = false;
-        this._field = new MinesweeperField(level.rows, level.columns, level.mines);
-        this._newGameObservable.next(level);
+        this._field = new MinesweeperField(this.currentLevel);
+        this._newGameObservable.next(this.currentLevel);
     }
 
     getTiles(): Iterable<MinesweeperTile> | undefined {
@@ -67,23 +69,25 @@ export class MinesweeperService {
 
     toggleTile(tile: MinesweeperTile): void {
         if (!this._isGameOver) {
-            if (!tile.isToggled() && !tile.isBlocked()) {
+            if (!tile.isToggled() && !tile.isLocked()) {
                 tile.toggle();
                 if (tile.isMined()) {
                     // Lost game
                     this._isGameOver = true;
                     this._timerSubscription.unsubscribe();
+                    return;
                 } else if (tile.isEmpty()) {
                     // Hit an empty cell, toggling all surronding cells.
-                    tile.borders.forEach(tile => {
-                        this.toggleTile(tile);
-                    })
+                    for (let perimeterTile of tile.perimeter!) {
+                        this.toggleTile(perimeterTile);
+                    }
                 }
-                if (this._field && this._field.checkGame()) {
+                if (this._field?.checkGame()) {
                     // All untoggled tiles are mines, game won
                     this._won = true;
                     this._isGameOver = true;
                     this._timerSubscription.unsubscribe();
+                    return;
                 }
             }
         }
@@ -92,9 +96,9 @@ export class MinesweeperService {
     blockTile(tile: MinesweeperTile): void {
         if (!this._isGameOver) {
             if (!tile.isToggled()) {
-                if (tile.isBlocked() || this._leftMines > 0) {
-                    tile.block = !tile.isBlocked()
-                    this._leftMines = tile.isBlocked() ? this._leftMines - 1 : this._leftMines + 1;
+                if (tile.isLocked() || this._leftMines > 0) {
+                    tile.lock = !tile.isLocked()
+                    this._leftMines = tile.isLocked() ? this._leftMines - 1 : this._leftMines + 1;
                 }
             }
         }

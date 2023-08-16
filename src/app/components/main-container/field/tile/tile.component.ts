@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MinesweeperTile } from 'src/app/models/minesweeper-tile.model';
 import { MinesweeperService } from 'src/app/services/minesweeper.service';
 
@@ -9,14 +9,14 @@ import { MinesweeperService } from 'src/app/services/minesweeper.service';
 })
 export class TileComponent {
     @Input()
-    tile: MinesweeperTile = new MinesweeperTile();
+    tile: MinesweeperTile = new MinesweeperTile(-1);
 
     constructor(private _minesweeperService: MinesweeperService) { }
 
     showWrongOverlay(): boolean {
         if (this._minesweeperService.isGameOver() && !this._minesweeperService.isWon()) {
             if (!this.tile.isToggled()) {
-                if (this.tile.isBlocked()) {
+                if (this.tile.isLocked()) {
                     return !this.tile.isMined();
                 }
             }
@@ -27,7 +27,7 @@ export class TileComponent {
     isButton(): boolean {
         if (this._minesweeperService.isGameOver() && !this._minesweeperService.isWon()) {
             if (!this.tile.isToggled()) {
-                if (this.tile.isBlocked()) {
+                if (this.tile.isLocked()) {
                     return this.tile.isMined();
                 } else {
                     return true;
@@ -42,7 +42,7 @@ export class TileComponent {
 
     getValue(): string {
         if (this._minesweeperService.isGameOver() && !this._minesweeperService.isWon()) {
-            if (this.tile.isBlocked() && !this.tile.isMined()) {
+            if (this.tile.isLocked() && !this.tile.isMined()) {
                 return "💣";
             }
         }
