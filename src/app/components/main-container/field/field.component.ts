@@ -10,7 +10,7 @@ import { MinesweeperService } from 'src/app/services/minesweeper.service';
     styleUrls: ['./field.component.scss']
 })
 export class FieldComponent implements OnDestroy {
-    width: string = "0";
+    width: string = '0';
     readonly TILE_SIZE: number = 30;
     private _newGameObserver?: Subscription;
     private _longPress: boolean = false;

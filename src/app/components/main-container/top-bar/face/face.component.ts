@@ -12,9 +12,9 @@ export class FaceComponent {
 
     public get face(): string {
         if (!this._minesweeperService.isGameOver()) {
-            return "🙂";
+            return '🙂';
         }
-        return this._minesweeperService.isWon() ? "😎" : "😣";
+        return this._minesweeperService.isWon() ? '😎' : '😣';
     }
 
     onClick() {

@@ -43,7 +43,7 @@ export class TileComponent {
     getValue(): string {
         if (this._minesweeperService.isGameOver() && !this._minesweeperService.isWon()) {
             if (this.tile.isLocked() && !this.tile.isMined()) {
-                return "💣";
+                return '💣';
             }
         }
         return this.tile.value;

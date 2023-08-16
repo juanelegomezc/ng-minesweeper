@@ -1,5 +1,5 @@
 export enum MinesweeperLevels {
-    BEGINNER = "BEGINNER",
-    INTERMEDIATE = "INTERMEDIATE",
-    EXPERT = "EXPERT"
+    BEGINNER = 'BEGINNER',
+    INTERMEDIATE = 'INTERMEDIATE',
+    EXPERT = 'EXPERT'
 }

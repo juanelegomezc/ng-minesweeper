@@ -1,6 +1,6 @@
-import { MinesweeperLevels } from "./minesweeper-levels.enum";
-import { MinesweeperPerimeter } from "./minesweeper-perimeter";
-import { MinesweeperTile } from "./minesweeper-tile.model";
+import { MinesweeperLevels } from './minesweeper-levels.enum';
+import { MinesweeperPerimeter } from './minesweeper-perimeter';
+import { MinesweeperTile } from './minesweeper-tile.model';
 
 export class MinesweeperLevelProperty {
     rows: number = -1;

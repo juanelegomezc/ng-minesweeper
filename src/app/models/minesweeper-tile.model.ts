@@ -1,4 +1,4 @@
-import { MinesweeperPerimeter } from "./minesweeper-perimeter";
+import { MinesweeperPerimeter } from './minesweeper-perimeter';
 
 export class MinesweeperTile {
     private _isMined: boolean = false;
@@ -8,14 +8,14 @@ export class MinesweeperTile {
     private _perimeter?: MinesweeperPerimeter;
     private _isLocked: boolean = false;
     private _colors: string[] = [
-        "blue",
-        "green",
-        "red",
-        "purple",
-        "maroon",
-        "turquoise",
-        "black",
-        "grey"
+        'blue',
+        'green',
+        'red',
+        'purple',
+        'maroon',
+        'turquoise',
+        'black',
+        'grey'
     ]
 
     constructor(pos: number) {
@@ -32,9 +32,9 @@ export class MinesweeperTile {
 
     public get value(): string {
         if (this._isLocked) {
-            return "🚩";
+            return '🚩';
         } else if (!this._isToggled) {
-            return "";
+            return '';
         } else if (this._isMined) {
             return '💣';
         } else if (!this.isEmpty()) {
@@ -57,9 +57,9 @@ export class MinesweeperTile {
 
     public get color(): string {
         if (!this.isToggled()) {
-            return "";
+            return '';
         }
-        return this._value > 0 ? this._colors[this._value - 1] : "";
+        return this._value > 0 ? this._colors[this._value - 1] : '';
     }
 
     public set mined(isMined: boolean) {

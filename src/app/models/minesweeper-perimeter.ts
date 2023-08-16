@@ -1,5 +1,5 @@
-import { MinesweeperField } from "./minesweeper-field.model";
-import { MinesweeperTile } from "./minesweeper-tile.model"
+import { MinesweeperField } from './minesweeper-field.model';
+import { MinesweeperTile } from './minesweeper-tile.model'
 
 export class MinesweeperPerimeter implements Iterable<MinesweeperTile>{
 
